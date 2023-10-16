@@ -22,16 +22,19 @@ def get_all_items() -> (dict, HTTPStatus):
 @app.post("/store")
 def create_store() -> (dict, HTTPStatus):
     store_data = request.get_json()
-    if 'name' not in store_data:
-        abort(HTTPStatus.BAD_REQUEST, message='Ensure name is included in the JSON payload.')
+    if "name" not in store_data:
+        abort(
+            HTTPStatus.BAD_REQUEST,
+            message="Ensure name is included in the JSON payload.",
+        )
 
     for store in stores.values():
-        name = store_data['name']
-        if name == store['name']:
-            abort(HTTPStatus.BAD_REQUEST, message='Store already exists.')
+        name = store_data["name"]
+        if name == store["name"]:
+            abort(HTTPStatus.BAD_REQUEST, message="Store already exists.")
 
     store_id = uuid4().hex
-    store = {**store_data, 'id': store_id}
+    store = {**store_data, "id": store_id}
     stores[store_id] = store
     return store, HTTPStatus.CREATED
 
@@ -42,19 +45,19 @@ def create_item() -> (dict, HTTPStatus):
 
     try:
         if not valid_new_item(item=item_data):
-            abort(HTTPStatus.BAD_REQUEST, message='Invalid item found.')
+            abort(HTTPStatus.BAD_REQUEST, message="Invalid item found.")
     except Exception as e:
         abort(HTTPStatus.BAD_REQUEST, message=str(e))
 
-    name = item_data['name']
-    store_id = item_data['store_id']
+    name = item_data["name"]
+    store_id = item_data["store_id"]
 
     if store_id not in stores:
         abort(HTTPStatus.BAD_REQUEST, message="Store does not exist.")
-    
+
     for item in items.values():
-        if name == item['name'] and store_id == item['store_id']:
-            abort(HTTPStatus.BAD_REQUEST, message='Item already exists.')  
+        if name == item["name"] and store_id == item["store_id"]:
+            abort(HTTPStatus.BAD_REQUEST, message="Item already exists.")
 
     item_id = uuid4().hex
     item = {**item_data, "id": item_id}
@@ -70,7 +73,7 @@ def get_store(store_id: str) -> (dict, HTTPStatus):
         abort(HTTPStatus.NOT_FOUND, "Store not found")
 
 
-@app.get('/item/<string:item_id>')
+@app.get("/item/<string:item_id>")
 def get_item(item_id: str) -> (dict, HTTPStatus):
     try:
         return items[item_id]
@@ -92,14 +95,13 @@ def update_item(item_id):
     item_data = {**request.get_json()}
     try:
         if not valid_update_item(item=item_data):
-            abort(HTTPStatus.BAD_REQUEST, message='Invalid item found.')
+            abort(HTTPStatus.BAD_REQUEST, message="Invalid item found.")
     except Exception as e:
         abort(HTTPStatus.BAD_REQUEST, message=str(e))
 
-
-    if 'store_id' in item_data and item_data['store_id'] not in stores:
+    if "store_id" in item_data and item_data["store_id"] not in stores:
         abort(HTTPStatus.BAD_REQUEST, message="Store does not exist.")
-    
+
     try:
         item = items[item_id]
         item |= item_data
