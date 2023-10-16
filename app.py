@@ -107,3 +107,12 @@ def update_item(item_id):
         return item
     except KeyError:
         abort(HTTPStatus.NOT_FOUND, message="Item not found.")
+
+
+@app.delete("/store/<string:store_id>")
+def delete_store(store_id):
+    try:
+        del stores[store_id]
+        return {"message": "Store deleted."}
+    except KeyError:
+        abort(HTTPStatus.NOT_FOUND, message="Store not found.")
