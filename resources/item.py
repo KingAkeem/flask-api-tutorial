@@ -5,6 +5,7 @@ from flask_smorest import Blueprint, abort
 
 from http import HTTPStatus
 
+from resources.validation.items import valid_update_item, valid_new_item
 from resources.db import items
 
 blp = Blueprint("Items", "items", description="Operations on items")
@@ -27,14 +28,13 @@ class Item(MethodView):
 
     def put(self, item_id: str) -> dict:
         item_data = request.get_json()
-        # There's  more validation to do here!
-        # Like making sure price is a number, and also both items are optional
-        # Difficult to do with an if statement...
-        if "price" not in item_data or "name" not in item_data:
-            abort(
-                HTTPStatus.BAD_REQUEST,
-                message="Ensure 'price', and 'name' are included in the JSON.",
-            )
+
+        try:
+            if not valid_update_item(item_data):
+                abort(HTTPStatus.BAD_REQUEST, message="Invalid item found")
+        except Exception as e:
+            abort(HTTPStatus.BAD_REQUEST, message=str(e))
+
         try:
             item = items[item_id]
 
@@ -53,21 +53,14 @@ class ItemList(MethodView):
 
     def post(self) -> dict:
         item_data = request.get_json()
-        # Here not only we need to validate data exists,
-        # But also what type of data. Price should be a float,
-        # for example.
-        if (
-            "price" not in item_data
-            or "store_id" not in item_data
-            or "name" not in item_data
-        ):
-            abort(
-                HTTPStatus.BAD_REQUEST,
-                message=" ".join(
-                    "Ensure 'price', 'store_id', and 'name' are included",
-                    "in the JSON payload.",
-                ),
-            )
+
+        try:
+            if not valid_new_item(item_data):
+                abort(HTTPStatus.BAD_REQUEST, message="Invalid item found.")
+
+        except Exception as e:
+            abort(HTTPStatus.BAD_REQUEST, message=str(e))
+
         for item in items.values():
             if (
                 item_data["name"] == item["name"]
