@@ -1,6 +1,6 @@
 def valid_update_item(item: dict) -> bool:
     required_keys = ['price', 'name']
-    all_keys = [*required_keys, 'store_id', 'item_id']
+    all_keys = [*required_keys, 'store_id']
 
     # check for invalid keys within the item
     for key in item.keys():
@@ -27,7 +27,7 @@ def valid_update_item(item: dict) -> bool:
 
 
 def valid_new_item(item: dict) -> bool:
-    required_keys = ['price', 'name']
+    required_keys = ['price', 'name', 'store_id']
     all_keys = [*required_keys, 'store_id', 'item_id']
 
     # check for invalid keys within the item
