@@ -10,18 +10,18 @@ There have been so changes to improve the codebase which includes, but is not li
 ## Dependencies
 
 ### Using `poetry`
-`poetry install` from the root dirtectory
+- `poetry install` from the root dirtectory
 
 ### Using `venv` (virtual environment)
-`python -m venv venv`
-`source venv/bin/activate`
-`pip install -r requirements.txt`
+1. `python -m venv venv`
+2. `source venv/bin/activate`
+3. `pip install -r requirements.txt`
 
 ## Starting server
 
 ### Using `poetry`
-`poetry run flask run`
+- `poetry run flask run`
 
 ### Using `venv`
 While inside the virtual environment,
-`flask run`
+- `flask run`
