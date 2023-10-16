@@ -2,7 +2,7 @@
 
 ## Description
 This repository is based on the telcado course, https://teclado.com/rest-apis-flask-python/.
-There have been so changes to improve the codebase which includes, but is not limited to:
+There have been some changes to improve the codebase which includes, but is not limited to:
 - type hints
 - poetry
 - shell scripts to simplify management of docker and poetry
