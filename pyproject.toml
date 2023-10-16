@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "flask-api-tutorial"
+version = "0.1.0"
+description = "A tutorial that demonstrates how to use Flask and SQLAlchemy"
+authors = ["Akeem King <akeemtlking@gmail.com>"]
+readme = "README.md"
+packages = [{include = "flask_api_tutorial"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "2.3.3"
+flask-smorest = "^0.42.1"
+python-dotenv = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
