@@ -14,11 +14,11 @@ blp = Blueprint("stores", __name__, description="Operations on stores")
 class Store(MethodView):
     @blp.response(HTTPStatus.OK, StoreSchema)
     def get(self, store_id: str) -> StoreModel:
-        store = StoreModel.get_or_404(store_id)
+        store = StoreModel.query.get_or_404(store_id)
         return store
 
     def delete(self, store_id: str) -> (dict, HTTPStatus):
-        store = StoreModel.get_or_404(store_id)
+        store = StoreModel.query.get_or_404(store_id)
         db.session.delete(store)
         db.session.commit()
         return {"message": "store deleted"}, HTTPStatus.OK
