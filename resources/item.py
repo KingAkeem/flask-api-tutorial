@@ -1,11 +1,10 @@
 import uuid
-from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 
 from http import HTTPStatus
 
-from resources.validation.items import valid_update_item, valid_new_item
+from schemas import ItemSchema, ItemUpdateSchema
 from resources.db import items
 
 blp = Blueprint("Items", "items", description="Operations on items")
@@ -26,15 +25,8 @@ class Item(MethodView):
         except KeyError:
             abort(HTTPStatus.NOT_FOUND, message="Item not found.")
 
-    def put(self, item_id: str) -> dict:
-        item_data = request.get_json()
-
-        try:
-            if not valid_update_item(item_data):
-                abort(HTTPStatus.BAD_REQUEST, message="Invalid item found")
-        except Exception as e:
-            abort(HTTPStatus.BAD_REQUEST, message=str(e))
-
+    @blp.arguments(ItemUpdateSchema)
+    def put(self, item_data: dict, item_id: str) -> dict:
         try:
             item = items[item_id]
 
@@ -51,16 +43,8 @@ class ItemList(MethodView):
     def get(self) -> dict:
         return {"items": list(items.values())}
 
-    def post(self) -> dict:
-        item_data = request.get_json()
-
-        try:
-            if not valid_new_item(item_data):
-                abort(HTTPStatus.BAD_REQUEST, message="Invalid item found.")
-
-        except Exception as e:
-            abort(HTTPStatus.BAD_REQUEST, message=str(e))
-
+    @blp.arguments(ItemSchema)
+    def post(self, item_data) -> dict:
         for item in items.values():
             if (
                 item_data["name"] == item["name"]
