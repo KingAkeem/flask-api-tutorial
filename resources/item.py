@@ -12,6 +12,7 @@ blp = Blueprint("Items", "items", description="Operations on items")
 
 @blp.route("/item/<string:item_id>")
 class Item(MethodView):
+    @blp.response(HTTPStatus.OK, ItemSchema)
     def get(self, item_id: str) -> dict:
         try:
             return items[item_id]
@@ -26,13 +27,11 @@ class Item(MethodView):
             abort(HTTPStatus.NOT_FOUND, message="Item not found.")
 
     @blp.arguments(ItemUpdateSchema)
+    @blp.response(HTTPStatus.OK, ItemSchema)
     def put(self, item_data: dict, item_id: str) -> dict:
         try:
             item = items[item_id]
-
-            # https://blog.teclado.com/python-dictionary-merge-update-operators/
             item |= item_data
-
             return item
         except KeyError:
             abort(HTTPStatus.NOT_FOUND, message="Item not found.")
@@ -40,11 +39,13 @@ class Item(MethodView):
 
 @blp.route("/item")
 class ItemList(MethodView):
-    def get(self) -> dict:
-        return {"items": list(items.values())}
+    @blp.response(HTTPStatus.OK, ItemSchema(many=True))
+    def get(self) -> list[dict]:
+        return items.values()
 
     @blp.arguments(ItemSchema)
-    def post(self, item_data) -> dict:
+    @blp.response(HTTPStatus.CREATED, ItemSchema)
+    def post(self, item_data: dict) -> dict:
         for item in items.values():
             if (
                 item_data["name"] == item["name"]
@@ -55,5 +56,4 @@ class ItemList(MethodView):
         item_id = uuid.uuid4().hex
         item = {**item_data, "id": item_id}
         items[item_id] = item
-
         return item

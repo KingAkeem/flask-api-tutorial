@@ -11,6 +11,7 @@ blp = Blueprint("stores", __name__, description="Operations on stores")
 
 @blp.route("/store/<string:store_id>")
 class Store(MethodView):
+    @blp.response(HTTPStatus.OK, StoreSchema)
     def get(self, store_id: str) -> dict:
         try:
             return stores[store_id]
@@ -27,11 +28,13 @@ class Store(MethodView):
 
 @blp.route("/store")
 class StoreList(MethodView):
+    @blp.response(HTTPStatus.OK, StoreSchema(many=True))
     def get(self):
         return {"stores": list(stores.values())}
 
     @blp.arguments(StoreSchema)
-    def post(self, store_data) -> dict:
+    @blp.response(HTTPStatus.CREATED, StoreSchema)
+    def post(self, store_data: dict) -> dict:
         for store in stores.values():
             if store_data["name"] == store["name"]:
                 abort(HTTPStatus.BAD_REQUEST, message="Store already exists.")
@@ -39,5 +42,4 @@ class StoreList(MethodView):
         store_id = uuid.uuid4().hex
         store = {**store_data, "id": store_id}
         stores[store_id] = store
-
         return store
