@@ -7,7 +7,7 @@ from http import HTTPStatus
 
 from models import ItemModel
 from schemas import ItemSchema, ItemUpdateSchema
-from resources.db import db
+from db import db
 
 blp = Blueprint("Items", "items", description="Operations on items")
 

@@ -8,7 +8,7 @@ from models import UserModel
 from schemas import UserSchema
 from blocklist import BLOCKLIST
 
-from resources.db import db
+from db import db
 
 
 blp = Blueprint("Users", "users", description="Operations on users")

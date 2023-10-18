@@ -5,7 +5,7 @@ from http import HTTPStatus
 
 from models import TagModel, StoreModel, ItemModel
 from schemas import TagSchema, TagAndItemSchema
-from resources.db import db
+from db import db
 
 blp = Blueprint("Tags", "tags", description="Operations on tags")
 
@@ -59,8 +59,10 @@ class Tag(MethodView):
     @blp.alt_response(
         HTTPStatus.BAD_REQUEST,
         description=" ".join(
-            "Returned if the tag is assigned to one or more items.",
-            "In this case, the tag is not deleted.",
+            (
+                "Returned if the tag is assigned to one or more items.",
+                "In this case, the tag is not deleted.",
+            )
         ),
     )
     def delete(self, tag_id: str) -> dict:

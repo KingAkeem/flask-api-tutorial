@@ -4,7 +4,7 @@ from http import HTTPStatus
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from models import StoreModel
-from resources.db import db
+from db import db
 from schemas import StoreSchema
 
 blp = Blueprint("stores", __name__, description="Operations on stores")
