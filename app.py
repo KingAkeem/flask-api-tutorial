@@ -5,8 +5,9 @@ from flask_smorest import Api
 
 from resources.item import blp as ItemBlueprint
 from resources.store import blp as StoreBlueprint
+from resources.tag import blp as TagBlueprint
 from resources.db import db
-from resources import models
+from resources import models  # noqa: F401
 
 
 def create_app(db_url: str = None) -> Flask:
@@ -33,5 +34,6 @@ def create_app(db_url: str = None) -> Flask:
 
     api.register_blueprint(ItemBlueprint)
     api.register_blueprint(StoreBlueprint)
+    api.register_blueprint(TagBlueprint)
 
     return app
