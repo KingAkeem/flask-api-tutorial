@@ -3,8 +3,8 @@ from flask_smorest import Blueprint, abort
 from http import HTTPStatus
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
+from models import StoreModel
 from resources.db import db
-from resources.models import StoreModel
 from schemas import StoreSchema
 
 blp = Blueprint("stores", __name__, description="Operations on stores")
