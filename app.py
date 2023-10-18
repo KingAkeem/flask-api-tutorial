@@ -4,6 +4,7 @@ from http import HTTPStatus
 from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate
 
 from blocklist import BLOCKLIST
 from resources.user import blp as UserBlueprint
@@ -11,6 +12,8 @@ from resources.item import blp as ItemBlueprint
 from resources.store import blp as StoreBlueprint
 from resources.tag import blp as TagBlueprint
 from db import db
+
+import models  # noqa: F401
 
 
 def create_app(db_url: str = None) -> Flask:
@@ -29,6 +32,8 @@ def create_app(db_url: str = None) -> Flask:
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
+
+    Migrate(app, db)
 
     api = Api(app)
 
@@ -94,11 +99,6 @@ def create_app(db_url: str = None) -> Flask:
             ),
             HTTPStatus.UNAUTHORIZED,
         )
-
-    with app.app_context():
-        import models  # noqa: F401
-
-        db.create_all()
 
     api.register_blueprint(UserBlueprint)
     api.register_blueprint(ItemBlueprint)
