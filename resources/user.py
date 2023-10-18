@@ -9,12 +9,14 @@ from flask_jwt_extended import (
     get_jwt_identity,
 )
 from http import HTTPStatus
+from sqlalchemy import or_
 
 from models import UserModel
-from schemas import UserSchema
+from schemas import UserSchema, UserRegisterSchema
 from blocklist import BLOCKLIST
 
 from db import db
+from emails import send_simple_message
 
 
 blp = Blueprint("Users", "users", description="Operations on users")
@@ -22,20 +24,30 @@ blp = Blueprint("Users", "users", description="Operations on users")
 
 @blp.route("/register")
 class UserRegister(MethodView):
-    @blp.arguments(UserSchema)
+    @blp.arguments(UserRegisterSchema)
     def post(self, user_data: dict) -> (dict, HTTPStatus):
-        filter_cond = UserModel.username == user_data["username"]
-        if UserModel.query.filter(filter_cond).first():
+        if UserModel.query.filter(
+            or_(
+                UserModel.username == user_data["username"],
+                UserModel.email == user_data["email"],
+            )
+        ).first():
             msg = "A user with that username already exists."
             abort(HTTPStatus.CONFLICT, message=msg)
 
         user = UserModel(
             username=user_data["username"],
+            email=user_data["email"],
             password=pbkdf2_sha256.hash(user_data["password"]),
         )
         db.session.add(user)
         db.session.commit()
 
+        send_simple_message(
+            to=user.email,
+            subject="Successfully signed up",
+            body=f"Hi {user.username}! yYou have successfully signed up.",
+        )
         return {"message": "User created successfully."}, HTTPStatus.CREATED
 
 
