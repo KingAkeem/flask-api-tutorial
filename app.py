@@ -83,6 +83,18 @@ def create_app(db_url: str = None) -> Flask:
             HTTPStatus.UNAUTHORIZED,
         )
 
+    @jwt.needs_fresh_token_loader
+    def token_not_fresh_callback(jwt_header, jwt_payload):
+        return (
+            jsonify(
+                {
+                    "description": "The token is not fresh.",
+                    "error": "fresh_token_required",
+                }
+            ),
+            HTTPStatus.UNAUTHORIZED,
+        )
+
     with app.app_context():
         import models  # noqa: F401
 
