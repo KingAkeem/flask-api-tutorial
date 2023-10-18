@@ -4,7 +4,6 @@ from http import HTTPStatus
 from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
-from flask_migrate import Migrate
 
 from blocklist import BLOCKLIST
 from resources.user import blp as UserBlueprint
@@ -97,6 +96,9 @@ def create_app(db_url: str = None) -> Flask:
             ),
             HTTPStatus.UNAUTHORIZED,
         )
+
+    with app.app_context():
+        db.create_all()
 
     api.register_blueprint(UserBlueprint)
     api.register_blueprint(ItemBlueprint)
