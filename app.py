@@ -33,8 +33,6 @@ def create_app(db_url: str = None) -> Flask:
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
 
-    Migrate(app, db)
-
     api = Api(app)
 
     app.config["JWT_SECRET_KEY"] = "akeem"
