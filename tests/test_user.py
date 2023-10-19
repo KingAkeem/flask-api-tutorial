@@ -38,3 +38,15 @@ def test_get_user() -> None:
             user_json = response.get_json()
             assert user_json["id"] == user.id
             assert user_json["username"] == user.username
+
+
+def test_delete_user() -> None:
+    flask_app = create_app()
+    with flask_app.app_context():
+        with flask_app.test_client() as client:
+            user = UserModel.query.filter(UserModel.username == "test-user").scalar()
+            response = client.delete(f"/user/{user.id}")
+            resp_json = response.get_json()
+            assert resp_json["message"] == "User deleted."
+            assert response.status_code == HTTPStatus.OK
+            assert UserModel.query.filter_by(id=user.id).first() == None
