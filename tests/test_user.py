@@ -6,7 +6,11 @@ def test_register() -> None:
     flask_app = create_app()
 
     with flask_app.test_client() as client:
-        test_json = {"username": "test-user", "password": "test-password"}
+        test_json = {
+            "username": "test-user",
+            "email": "dummy-email@yahoo.com",
+            "password": "test-password",
+        }
         response = client.post("/register", json=test_json)
         response_data = response.get_json()
         assert response_data["message"] == "User created successfully."
