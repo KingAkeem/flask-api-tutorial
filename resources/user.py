@@ -69,7 +69,7 @@ class User(MethodView):
         user = UserModel.query.get_or_404(user_id)
         db.session.delete(user)
         db.session.commit()
-        return {"message": "User deleted."}, 200
+        return {"message": "User deleted."}, HTTPStatus.OK
 
 
 @blp.route("/login")
@@ -110,4 +110,4 @@ class TokenRefresh(MethodView):
         # blocklist will depend on the app design
         jti = get_jwt()["jti"]
         BLOCKLIST.add(jti)
-        return {"access_token": new_token}, 200
+        return {"access_token": new_token}, HTTPStatus.OK
