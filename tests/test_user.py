@@ -1,5 +1,6 @@
 from app import create_app
 from http import HTTPStatus
+from models import UserModel
 
 
 def test_register() -> None:
@@ -19,7 +20,6 @@ def test_register() -> None:
 
 def test_login() -> None:
     flask_app = create_app()
-
     with flask_app.test_client() as client:
         test_json = {"username": "test-user", "password": "test-password"}
         response = client.post("/login", json=test_json)
@@ -27,3 +27,14 @@ def test_login() -> None:
         assert "access_token" in response_data
         assert "refresh_token" in response_data
         assert response.status_code == HTTPStatus.OK
+
+
+def test_get_user() -> None:
+    flask_app = create_app()
+    with flask_app.app_context():
+        with flask_app.test_client() as client:
+            user = UserModel.query.filter(UserModel.username == "test-user").scalar()
+            response = client.get(f"/user/{user.id}")
+            user_json = response.get_json()
+            assert user_json["id"] == user.id
+            assert user_json["username"] == user.username
